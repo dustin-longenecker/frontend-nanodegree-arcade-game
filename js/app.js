@@ -29,24 +29,30 @@ var Enemy = function() {
     this.y = this.setYval();
     this.vel = Math.random() * 125 + 75;
     this.radius = 25;
-};
+}
 Enemy.prototype.setYval = function() {
   //select random row
-  var randY = Math.floor(Math.random() * 3 + 1);
+  var randY = Math.floor(Math.random() * 5 + 1);
   //adjust enemy yval
   if(randY === 1) {
-    return this.yVal = 60;
+    return 60;
   }
   else if(randY === 2) {
-    return this.yVal = 140;
+    return 145;
   }
   else if(randY === 3) {
-    return this.yVal = 225;
+    return 230;
+  }
+  else if (randY === 4) {
+    return 315;
+  }
+  else if (randY === 5) {
+    return 400;
   }
   else{
     console.log('error');
   }
-};
+}
 // Update the enemy's position, required method for game
 // Parameter: dt, a time delta between ticks
 Enemy.prototype.update = function(dt) {
@@ -56,7 +62,7 @@ Enemy.prototype.update = function(dt) {
     //check collisions / reposition if enemy goes off canvas
     this.checkCollisions();
     this.x = this.x + dt * this.vel;
-    if (this.x > 505) {
+    if (this.x > 913) {
         this.x = -105;
         this.y = this.setYval();
     }
@@ -65,12 +71,12 @@ Enemy.prototype.update = function(dt) {
 
 
 
-};
+}
 
 // Draw the enemy on the screen, required method for game
 Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-};
+}
 
 Enemy.prototype.checkCollisions = function(){
 
@@ -91,6 +97,9 @@ Enemy.prototype.checkCollisions = function(){
 }
 Enemy.prototype.detectCollision = function() {
   player.score -= 15;
+  if (player.score <= 0){
+    player.score = 0;
+  }
   player.lives -= 1;
   if(player.lives < 0){
     player.score = 0;
@@ -128,21 +137,22 @@ Player.prototype.handleInput = function(key) {
         this.y -= 30;
       break;
     case "right":
-      if(this.x < 400){
+      if(this.x < 600){
         this.x += 40;
       }
       break;
     case "down":
-      if(this.y < 400){
+      if(this.y < 500){
         this.y += 30;
       }
       break;
   }
+
 }
 //position reset function
 Player.prototype.reset = function() {
-  this.x = 200;
-  this.y = 400;
+  this.x = 300;
+  this.y = 500;
 }
 
 Player.prototype.update = function(key) {
@@ -164,20 +174,115 @@ Player.prototype.render = function() {
 
   //score & lives text display
   ctx.font = '33px serif'; // font & size
-  ctx.fillText("Score: " + this.score, 13, 100); // display str / value / position
-  ctx.fillText("Lives: "+ this.lives, 13, 575);
-  ctx.fillText("Level: " + this.level, 365, 100);
+  ctx.drawImage(Resources.get('images/Star.png'), -3, -3);
+  ctx.fillText(this.score, 30, 110); // display str / value / position
+  ctx.drawImage(Resources.get('images/Heart.png'), 0, 500);
+  ctx.fillText(this.lives, 43, 600);
+  ctx.drawImage(Resources.get('images/Key.png'), 625, 0);
+  ctx.fillText(this.level, 625, 100);
 
 
 }
+//gems
+var Gem = function(x, y) {
+  //randomize gem color
+  var randGem = Math.floor(Math.random() * 3 + 1);
+  switch(randGem) {
+    case 1:
+    this.sprite = 'images/Gem-Blue.png';
+    break;
+    case 2:
+    this.sprite = 'images/Gem-Green.png';
+    break;
+    case 3:
+    this.sprite = 'images/Gem-Orange.png';
+  }
+  this.x = x;
+  this.y = y;
+
+  this.radius = 20;
+
+}
+
+Gem.prototype.render = function() {
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+}
+//rocks
+var Rock = function(x, y) {
+  this.sprite = 'images/Rock.png';
+  var randY = Math.floor(Math.random() * 450 + 1);
+  var randX = Math.floor(Math.random() * 600 + 1);
+  this.x = randX;
+  this.y = randY;
+
+  this.radius = 25;
+
+}
+
+Rock.prototype.render = function() {
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+}
+Rock.prototype.update = function () {
+  this.checkCollisions();
+}
+Rock.prototype.checkCollisions = function(){
+  var dx = rock.x - player.x;
+  var dy = rock.y - player.y;
+  var distance = Math.sqrt(dx * dx + dy * dy);
+  if (distance < rock.radius + player.radius){
+
+     this.detectCollision();
+     console.log('collision');
+   }
+   else{}
+}
+Rock.prototype.detectCollision = function() {
+
+}
+//rocks
+var Heart = function(x, y) {
+  this.sprite = 'images/Heart.png';
+  this.x = x;
+  this.y = y;
+
+  this.radius = 20;
+
+}
+
+Heart.prototype.render = function() {
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+}
+Heart.prototype.update = function() {
+    this.checkCollisions();
+}
+Heart.prototype.checkCollisions = function() {
+  var dx = heart.x - player.x;
+  var dy = heart.y - player.y;
+  var distance = Math.sqrt(dx * dx + dy * dy);
+  if(distance < heart.radius + player.radius){
+
+     this.detectCollision();
+     console.log('collision');
+   }
+   else{}
+}
+Heart.prototype.detectCollision = function() {
+  if(player.lives < 10){
+    player.lives += 1;
+  }
+  else{}
+}
+
 
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
 
-var player = new Player(200,400,0,2,1); //instantiate player object
+var player = new Player(300,500,0,2,1); //instantiate player object
+
 
 var allEnemies = []; //establish allEnemies array
+
 
 var numOfEnemies = 7; // static # of enemies
 
@@ -185,6 +290,12 @@ var numOfEnemies = 7; // static # of enemies
 for (var i = 0; i < numOfEnemies; i++) {
     allEnemies.push(new Enemy());
 }
+
+var gem = new Gem(300, 300);
+var rock = new Rock();
+//var rock2 = new Rock();
+//var rock3 = new Rock();
+var heart = new Heart(400, 200);
 
 
 
