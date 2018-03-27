@@ -156,7 +156,7 @@ var Engine = (function(global) {
         });
 
         player.render();
-        gem.render();
+        //gem.render();
         rock.render();
         //rock2.render();
         //rock3.render();

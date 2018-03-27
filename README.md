@@ -1,6 +1,6 @@
 frontend-nanodegree-arcade-game
 ===============================
-#rubric
+# rubric
 The game functions correctly and runs error free
 
 Player can not move off screen

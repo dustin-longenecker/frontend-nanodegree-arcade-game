@@ -14,7 +14,13 @@
   https://www.youtube.com/watch?v=cXgA1d_E-jY //game building
 */
 
+var randY = function() {
+  return Math.floor(Math.random() * 450 + 1);
 
+}
+var randX = function() {
+  return Math.floor(Math.random() * 600 + 1);
+}
 
 
 // Enemies our player must avoid
@@ -27,6 +33,7 @@ var Enemy = function() {
     this.sprite = 'images/enemy-bug.png';
     this.x = -5;
     this.y = this.setYval();
+    this.pos = [this.x, this.setYval()];
     this.vel = Math.random() * 125 + 75;
     this.radius = 25;
 }
@@ -61,10 +68,10 @@ Enemy.prototype.update = function(dt) {
     // all computers.
     //check collisions / reposition if enemy goes off canvas
     this.checkCollisions();
-    this.x = this.x + dt * this.vel;
-    if (this.x > 913) {
-        this.x = -105;
-        this.y = this.setYval();
+    this.pos[0] = this.pos[0] + dt * this.vel;
+    if (this.pos[0] > 913) {
+        this.pos[0] = -105;
+        this.pos[1] = this.setYval();
     }
     else{
     }
@@ -75,7 +82,7 @@ Enemy.prototype.update = function(dt) {
 
 // Draw the enemy on the screen, required method for game
 Enemy.prototype.render = function() {
-    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+    ctx.drawImage(Resources.get(this.sprite), this.pos[0], this.pos[1]);
 }
 
 Enemy.prototype.checkCollisions = function(){
@@ -84,12 +91,13 @@ Enemy.prototype.checkCollisions = function(){
   //calculate distance between objects using circle collision detetction
   for (var i = 0; i < allEnemies.length; i++){
 
-    var dx = allEnemies[i].x - player.x;
-    var dy = allEnemies[i].y - player.y;
+    var dx = allEnemies[i].pos[0] - player.pos[0];
+    var dy = allEnemies[i].pos[1] - player.pos[1];
     var distance = Math.sqrt(dx * dx + dy * dy);
    //collision detected
    if(distance < allEnemies[i].radius + player.radius){
       this.detectCollision();
+      console.log('hit');
     }
     else{}
   }
@@ -104,22 +112,24 @@ Enemy.prototype.detectCollision = function() {
   if(player.lives < 0){
     player.score = 0;
     player.lives = 2;
-    player.level = 1;
+    this.level = 1;
+    rock.reset();
   }
-  player.reset();
+  player.reset(300, 500);
 }
 
 
 // Now write your own player class
 // This class requires an update(), render() and
 // a handleInput() method.
-var Player = function(x, y, score, lives, level) {
+var Player = function(x, y, score, lives) {
   this.sprite = 'images/char-boy.png';
-  this.x = x;
-  this.y = y;
+  //this.x = x;
+  //this.y = y;
+  this.pos = [x, y];
   this.score = score;
   this.lives = lives;
-  this.level = level;
+  this.level = 1;
   this.radius = 25;
 
 }
@@ -129,40 +139,42 @@ Player.prototype.handleInput = function(key) {
   //character movement / boundary control
   switch (key) {
     case "left":
-      if(this.x > 0){
-        this.x -= 40;
+      if(this.pos[0] > 0){
+        this.pos[0] -= 40;
       }
       break;
     case "up":
-        this.y -= 30;
+        this.pos[1] -= 30;
       break;
     case "right":
-      if(this.x < 600){
-        this.x += 40;
+      if(this.pos[0] < 600){
+        this.pos[0] += 40;
       }
       break;
     case "down":
-      if(this.y < 500){
-        this.y += 30;
+      if(this.pos[1] < 500){
+        this.pos[1] += 30;
       }
       break;
   }
 
 }
 //position reset function
-Player.prototype.reset = function() {
-  this.x = 300;
-  this.y = 500;
+Player.prototype.reset = function(x, y) {
+  this.pos[0] = x;
+  this.pos[1] = y;
 }
 
-Player.prototype.update = function(key) {
+Player.prototype.update = function(dt) {
   //checks if player made to end
   //adds player score
   //calls reset() for player position
-  if (this.y < 0) {
+  if (this.pos[1] < 0) {
     this.score += 30;
     this.level += 1;
-    this.reset();
+    this.reset(300, 500);
+    rock.reset();
+    console.log(player.level);
   }
   else{
   }
@@ -170,7 +182,7 @@ Player.prototype.update = function(key) {
 
 Player.prototype.render = function() {
   //character render
-  ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+  ctx.drawImage(Resources.get(this.sprite), this.pos[0], this.pos[1]);
 
   //score & lives text display
   ctx.font = '33px serif'; // font & size
@@ -183,81 +195,58 @@ Player.prototype.render = function() {
 
 
 }
-//gems
-var Gem = function(x, y) {
-  //randomize gem color
-  var randGem = Math.floor(Math.random() * 3 + 1);
-  switch(randGem) {
-    case 1:
-    this.sprite = 'images/Gem-Blue.png';
-    break;
-    case 2:
-    this.sprite = 'images/Gem-Green.png';
-    break;
-    case 3:
-    this.sprite = 'images/Gem-Orange.png';
-  }
-  this.x = x;
-  this.y = y;
 
-  this.radius = 20;
-
-}
-
-Gem.prototype.render = function() {
-    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-}
 //rocks
+
+
 var Rock = function(x, y) {
   this.sprite = 'images/Rock.png';
-  var randY = Math.floor(Math.random() * 450 + 1);
-  var randX = Math.floor(Math.random() * 600 + 1);
-  this.x = randX;
-  this.y = randY;
-
+  this.pos = [randX(), randY()];
   this.radius = 25;
 
 }
 
 Rock.prototype.render = function() {
-    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+    ctx.drawImage(Resources.get(this.sprite), this.pos[0], this.pos[1]);
 }
 Rock.prototype.update = function () {
   this.checkCollisions();
 }
+Rock.prototype.reset = function () {
+  rock.pos[0] = randX();
+  rock.pos[1] = randY();
+}
 Rock.prototype.checkCollisions = function(){
-  var dx = rock.x - player.x;
-  var dy = rock.y - player.y;
+  var dx = rock.pos[0] - player.pos[0];
+  var dy = rock.pos[1] - player.pos[1];
   var distance = Math.sqrt(dx * dx + dy * dy);
   if (distance < rock.radius + player.radius){
-
-     this.detectCollision();
-     console.log('collision');
+    this.detectCollision();
+    return true;
    }
-   else{}
+   else{return false;}
 }
 Rock.prototype.detectCollision = function() {
-
+  console.log('hit');
 }
-//rocks
+//hearts
 var Heart = function(x, y) {
   this.sprite = 'images/Heart.png';
-  this.x = x;
-  this.y = y;
+  this.pos = [randX(), randY()];
 
   this.radius = 20;
 
 }
 
 Heart.prototype.render = function() {
-    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+    ctx.drawImage(Resources.get(this.sprite), this.pos[0], this.pos[1]);
 }
 Heart.prototype.update = function() {
     this.checkCollisions();
 }
 Heart.prototype.checkCollisions = function() {
-  var dx = heart.x - player.x;
-  var dy = heart.y - player.y;
+  var dx = heart.pos[0] - player.pos[0];
+  var dy = heart.pos[1] - player.pos[1];
   var distance = Math.sqrt(dx * dx + dy * dy);
   if(distance < heart.radius + player.radius){
 
@@ -278,20 +267,20 @@ Heart.prototype.detectCollision = function() {
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
 
-var player = new Player(300,500,0,2,1); //instantiate player object
+var player = new Player(300,500,0,2); //instantiate player object
 
 
 var allEnemies = []; //establish allEnemies array
 
 
-var numOfEnemies = 7; // static # of enemies
+var numOfEnemies = player.level; // static # of enemies
 
 //populate allEnemies array
 for (var i = 0; i < numOfEnemies; i++) {
     allEnemies.push(new Enemy());
 }
 
-var gem = new Gem(300, 300);
+
 var rock = new Rock();
 //var rock2 = new Rock();
 //var rock3 = new Rock();
