@@ -42,7 +42,7 @@ function checkCollisions() {
   var dy = rock.pos[1] - player.pos[1];
   var line1 = dx * dx + dy * dy;
   //var line2 = newdx * newdx + dy * dy;
-  if (distance < rock.radius + player.radius) {
+  if (line1 < rock.radius + player.radius) {
     detectCollision("rock");
   } else {}
   var dx = heart.pos[0] - player.pos[0];
@@ -58,23 +58,26 @@ function detectCollision(type) {
   //switch statement where "type" is the collision type
   switch (type) {
     case "enemy":
-      player.score -= 15;
-      if (player.score <= 0) {
+    player.score -= 15;
+    player.lives -= 1;
+    reset(300, 500);
+
+    if (player.lives < 0) {
+      player.score = 0;
+      player.lives = 2;
+      player.level = 1;
+    }
+    else if (player.score <= 0) {
         player.score = 0;
       }
-      player.lives -= 1;
-      if (player.lives < 0) {
-        player.score = 0;
-        player.lives = 2;
-        this.level = 1;
-        reset(300, 500);
-      }
+
+
       break;
     case "rock":
-      console.log("hit");
+      console.log("rock");
       break;
     case "heart":
-      console.log("hit");
+      console.log("heart");
       break;
   }
 }
@@ -117,7 +120,7 @@ Enemy.prototype.update = function(dt) {
   // which will ensure the game runs at the same speed for
   // all computers.
   //check collisions / reposition if enemy goes off canvas
-  //checkCollisions();
+  checkCollisions();
   this.pos[0] = this.pos[0] + dt * this.vel;
   if (this.pos[0] > 913) {
     this.pos[0] = -105;
@@ -143,6 +146,7 @@ var Player = function(x, y, score, lives) {
 }
 Player.prototype.handleInput = function(key) {
   //character movement / boundary control
+
   switch (key) {
     case "left":
       if (this.pos[0] > 0) {
