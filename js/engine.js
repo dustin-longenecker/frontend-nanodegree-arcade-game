@@ -64,7 +64,7 @@ var Engine = (function(global) {
      * game loop.
      */
     function init() {
-        reset();
+        reset(300, 500);
         lastTime = Date.now();
         main();
     }
@@ -80,7 +80,7 @@ var Engine = (function(global) {
      */
     function update(dt) {
         updateEntities(dt);
-        // checkCollisions();
+        checkCollisions();
     }
 
     /* This is called by the update function and loops through all of the
@@ -94,7 +94,7 @@ var Engine = (function(global) {
         allEnemies.forEach(function(enemy) {
             enemy.update(dt);
         });
-        player.update();
+        player.update(dt);
         rock.update();
         heart.update();
     }
@@ -156,10 +156,7 @@ var Engine = (function(global) {
         });
 
         player.render();
-        //gem.render();
         rock.render();
-        //rock2.render();
-        //rock3.render();
         heart.render();
     }
 
@@ -167,9 +164,14 @@ var Engine = (function(global) {
      * handle game reset states - maybe a new game menu or a game over screen
      * those sorts of things. It's only called once by the init() method.
      */
-    function reset() {
-        // noop
-    }
+     //reset function
+     function reset () {
+       //player with static x & y values
+       //player.pos = [x, y];
+       //rock & heart reset with randX & randY functions
+       //rock.pos = [randX(), randY()];
+       //heart.pos = [randX(), randY()];
+     }
 
     /* Go ahead and load all of the images we know we're going to need to
      * draw our game level. Then set init as the callback method, so that when
