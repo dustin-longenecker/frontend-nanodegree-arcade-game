@@ -91,12 +91,13 @@ var Engine = (function(global) {
      * render methods.
      */
     function updateEntities(dt) {
+
         allEnemies.forEach(function(enemy) {
             enemy.update(dt);
         });
         player.update(dt);
-        rock.update();
-        heart.update();
+        //rock.update();
+        //heart.update();
     }
 
     /* This function initially draws the "game level", it will then call
@@ -156,8 +157,8 @@ var Engine = (function(global) {
         });
 
         player.render();
-        rock.render();
-        heart.render();
+        //rock.render();
+        //heart.render();
     }
 
     /* This function does nothing but it could have been a good place to
