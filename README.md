@@ -27,7 +27,7 @@ No installation required. Runs complete in any browser.
 
 # keybindings
 - Arrow keys used to move avatar up, down, left, and right.
-- Enter key used to select.
+
 
 - - -
 
@@ -36,8 +36,7 @@ No installation required. Runs complete in any browser.
 - Player goal is to move to grass without being hit by enemies.
 - Player gets 30 points for succeeding to complete goal.
 - Player loses 15 points for failing to complete goal.
-- Bonus Player Lives or Point Items may appear and can be acquired by standing at the Item's location.
-- Enemy speed scales per level.
+
 
 - - -
 
