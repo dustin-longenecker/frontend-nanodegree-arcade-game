@@ -11,13 +11,17 @@
   https://www.youtube.com/watch?v=uAfw-ko3kB8 //intersection collision
   https://www.youtube.com/watch?v=cXgA1d_E-jY //game building
 */
+
+//function that returns a random Y coordinate for enemies
+/*
 var randY = function() {
   return Math.floor(Math.random() * 450 + 1);
 }
+//function that returns a random X coordinate
 var randX = function() {
   return Math.floor(Math.random() * 600 + 1);
-}
-//reset function
+}*/
+//reset function, returns player to starting position
 function reset(x, y) {
   //player with static x & y values
   player.pos = [x, y];
@@ -26,6 +30,7 @@ function reset(x, y) {
   //heart.pos = [randX(), randY()];
 }
 
+//checks for collision
 function checkCollisions() {
   //loop through allEnemies array
   //calculate distance between objects using circle collision detetction

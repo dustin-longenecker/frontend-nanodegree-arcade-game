@@ -37,8 +37,11 @@ Enemy.prototype.update = function(dt) {
   // all computers.
   //check collisions / reposition if enemy goes off canvas
   checkCollisions();
+  //takes x coordinate of enemy and adds the product of dt times the velocity
   this.pos[0] = this.pos[0] + dt * this.vel;
+  //checks if enemy moved off canvas
   if (this.pos[0] > 913) {
+  //if true resets the X coordinate and provides a new random Y coordinate
     this.pos[0] = -105;
     this.pos[1] = this.setYval();
   }
